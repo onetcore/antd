@@ -1,7 +1,7 @@
 import { AnyAction, Reducer } from 'redux';
-
+import { message } from 'antd';
 import { EffectsCommandMap } from 'dva';
-import { fakeRegister } from '../../../services/register';
+import { fakeRegister, getFakeCaptcha } from './service';
 
 export interface StateType {
   status?: 'ok' | 'error';
@@ -18,6 +18,7 @@ export interface ModelType {
   state: StateType;
   effects: {
     submit: Effect;
+    getCaptcha: Effect;
   };
   reducers: {
     registerHandle: Reducer<StateType>;
@@ -38,6 +39,15 @@ const Model: ModelType = {
         type: 'registerHandle',
         payload: response,
       });
+    },
+
+    *getCaptcha({ payload }, { call }) {
+      const response = yield call(getFakeCaptcha, payload);
+      if (response.status === 'ok') {
+        message.success('短信验证码已经发送！');
+      } else {
+        message.error(response.message);
+      }
     },
   },
 

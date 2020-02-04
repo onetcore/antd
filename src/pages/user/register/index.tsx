@@ -57,20 +57,20 @@ interface RegisterState {
   prefix: string;
 }
 
-export interface UserRegisterParams {
-  userName:string;
-  mail: string;
-  password: string;
-  confirm: string;
+export interface CaptchType {
   mobile: string;
-  captcha: string;
   prefix: string;
 }
 
-class Register extends Component<
-  RegisterProps,
-  RegisterState
-> {
+export interface UserRegisterParams extends CaptchType {
+  userName: string;
+  mail: string;
+  password: string;
+  confirm: string;
+  captcha: string;
+}
+
+class Register extends Component<RegisterProps, RegisterState> {
   state: RegisterState = {
     count: 0,
     confirmDirty: false,
@@ -99,7 +99,37 @@ class Register extends Component<
     clearInterval(this.interval);
   }
 
-  onGetCaptcha = () => {
+  onGetCaptcha = async () => {
+    this.validateMobileForCaptch()
+      .then(result => {
+        if (result) this.runGetCaptchaCountDown();
+      })
+      .catch(reason => message.error(reason));
+  };
+
+  validateMobileForCaptch = () =>
+    new Promise<unknown>((resolve, reject) => {
+      const { form } = this.props;
+      form.validateFields(['mobile'], {}, async (err: unknown, values: UserRegisterParams) => {
+        if (err) {
+          reject(err);
+        } else {
+          const { dispatch } = this.props;
+          try {
+            const { prefix } = this.state;
+            const success = await ((dispatch({
+              type: 'userAndregister/getCaptcha',
+              payload: { mobile: values.mobile, prefix },
+            }) as unknown) as Promise<unknown>);
+            resolve(!!success);
+          } catch (error) {
+            reject(error);
+          }
+        }
+      });
+    });
+
+  runGetCaptchaCountDown = () => {
     let count = 59;
     this.setState({ count });
     this.interval = window.setInterval(() => {
@@ -217,7 +247,7 @@ class Register extends Component<
                 {
                   required: true,
                   message: formatMessage({ id: 'userandregister.userName.required' }),
-                }
+                },
               ],
             })(
               <Input
@@ -344,7 +374,9 @@ class Register extends Component<
                 })(
                   <Input
                     size="large"
-                    placeholder={formatMessage({ id: 'userandregister.verification-code.placeholder' })}
+                    placeholder={formatMessage({
+                      id: 'userandregister.verification-code.placeholder',
+                    })}
                   />,
                 )}
               </Col>

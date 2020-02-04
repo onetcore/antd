@@ -7,11 +7,11 @@ import { Dispatch, AnyAction } from 'redux';
 import { FormComponentProps } from 'antd/es/form';
 import Link from 'umi/link';
 import { connect } from 'dva';
-import { StateType } from '@/models/login';
+import { StateType } from '@/pages/user/login/model';
+import { ConnectState } from '@/models/connect';
+import { LoginParamsType } from '@/pages/user/login/service';
 import LoginComponents from './components/Login';
 import styles from './style.less';
-import { LoginParamsType } from '@/services/login';
-import { ConnectState } from '@/models/connect';
 
 const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginComponents;
 
@@ -108,7 +108,7 @@ class Login extends Component<LoginProps, LoginState> {
               loginType === 'account' &&
               !submitting &&
               this.renderMessage(
-                message||formatMessage({ id: 'user-login.login.message-invalid-credentials' }),
+                message || formatMessage({ id: 'user-login.login.message-invalid-credentials' }),
               )}
             <UserName
               name="userName"
@@ -142,7 +142,8 @@ class Login extends Component<LoginProps, LoginState> {
               loginType === 'mobile' &&
               !submitting &&
               this.renderMessage(
-                message||formatMessage({ id: 'user-login.login.message-invalid-verification-code' }),
+                message ||
+                  formatMessage({ id: 'user-login.login.message-invalid-verification-code' }),
               )}
             <Mobile
               name="mobile"

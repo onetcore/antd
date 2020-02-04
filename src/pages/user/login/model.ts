@@ -3,9 +3,10 @@ import { Effect } from 'dva';
 import { stringify } from 'querystring';
 import router from 'umi/router';
 
-import { fakeAccountLogin, getFakeCaptcha } from '@/services/login';
+import { fakeAccountLogin, getFakeCaptcha } from '@/pages/user/login/service';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
+import { message } from 'antd';
 
 export interface StateType {
   status?: 'ok' | 'error';
@@ -44,8 +45,7 @@ const Model: LoginModelType = {
       });
       // Login successfully
       if (response.status == 'ok') {
-        if (response.token)
-          localStorage.setItem('jwt-token', response.token);
+        if (response.token) localStorage.setItem('jwt-token', response.token);
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params as { redirect: string };
@@ -66,7 +66,12 @@ const Model: LoginModelType = {
     },
 
     *getCaptcha({ payload }, { call }) {
-      yield call(getFakeCaptcha, payload);
+      const response = yield call(getFakeCaptcha, payload);
+      if (response.status === 'ok') {
+        message.success('短信验证码已经发送！');
+      } else {
+        message.error(response.message);
+      }
     },
 
     logout() {

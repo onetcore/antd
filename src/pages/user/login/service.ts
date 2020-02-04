@@ -5,7 +5,7 @@ export interface LoginParamsType {
   password: string;
   mobile: string;
   captcha: string;
-  autoLogin:boolean;
+  autoLogin: boolean;
 }
 
 export async function fakeAccountLogin(params: LoginParamsType) {
