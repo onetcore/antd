@@ -1,10 +1,10 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, Dropdown, Menu, message } from 'antd';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, Fragment } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
-import UpdateForm, { FormValueType } from './components/UpdateForm';
+import UpdateForm from './components/UpdateForm';
 import { RoleModel } from './data';
 import { query, update, create, remove } from './service';
 
@@ -30,7 +30,7 @@ const handleAdd = async (fields: RoleModel) => {
  */
 const handleUpdate = async (fields: RoleModel) => {
   const hide = message.loading('正在更新角色');
-  const response = await create(fields);
+  const response = await update(fields);
   if (response.status === 'ok') {
     hide();
     message.success('更新成功');
@@ -47,9 +47,7 @@ const handleUpdate = async (fields: RoleModel) => {
 const handleRemove = async (selectedRows: RoleModel[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
-  const response = await remove({
-    key: selectedRows.map(row => row.id),
-  });
+  const response = await remove(selectedRows.map(row => row.id));
   if (response.status === 'ok') {
     hide();
     message.success('删除成功，即将刷新');
@@ -81,7 +79,7 @@ const TableList: React.FC<{}> = () => {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
-      render: (_, record) => (
+      render: (_, record, index) => (
         <>
           <a
             onClick={() => {
@@ -89,10 +87,8 @@ const TableList: React.FC<{}> = () => {
               setStepFormValues(record);
             }}
           >
-            配置
+            修改
           </a>
-          <Divider type="vertical" />
-          <a href="">订阅警报</a>
         </>
       ),
     },

@@ -24,7 +24,6 @@ export interface DataPagination<T = {}> {
      * 数据集合。
      */
     data: T[];
-
     /**
      * 排序。
      */

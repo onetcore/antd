@@ -17,7 +17,7 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
   const okHandle = async () => {
     const fieldsValue = (await form.validateFields()) as RoleModel;
     form.resetFields();
-    handleUpdate(fieldsValue);
+    handleUpdate({ ...fieldsValue, id: values.id });
   };
   return (
     <Modal

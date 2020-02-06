@@ -5,13 +5,10 @@ export async function query() {
   return request('/api/roles');
 }
 
-export async function remove(params: { key: number[] }) {
+export async function remove(ids: number[]) {
   return request('/api/roles/remove', {
     method: 'POST',
-    data: {
-      ...params,
-      method: 'delete',
-    },
+    data:ids,
   });
 }
 
@@ -19,8 +16,7 @@ export async function create(params: RoleModel) {
   return request('/api/role/create', {
     method: 'POST',
     data: {
-      ...params,
-      method: 'post',
+      ...params
     },
   });
 }
@@ -29,8 +25,7 @@ export async function update(params: RoleModel) {
   return request('/api/role/update', {
     method: 'POST',
     data: {
-      ...params,
-      method: 'update',
+      ...params
     },
   });
 }
