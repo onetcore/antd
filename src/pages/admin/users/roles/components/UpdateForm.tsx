@@ -1,6 +1,7 @@
 import React from 'react';
-import { Form, Input, Modal } from 'antd';
-import { RoleModel } from '../data';
+import { Form, Input, Modal, Select } from 'antd';
+import ColorPicer from '@/components/ColorPicker';
+import { RoleModel } from '../types';
 
 export interface UpdateFormProps {
   onCancel: (flag?: boolean, formVals?: RoleModel) => void;
@@ -9,6 +10,7 @@ export interface UpdateFormProps {
   values: Partial<RoleModel>;
 }
 const FormItem = Form.Item;
+const { Option } = Select;
 
 const UpdateForm: React.FC<UpdateFormProps> = props => {
   const [form] = Form.useForm();
@@ -17,7 +19,7 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
   const okHandle = async () => {
     const fieldsValue = (await form.validateFields()) as RoleModel;
     form.resetFields();
-    handleUpdate({ ...fieldsValue, id: values.id });
+    handleUpdate({ ...fieldsValue, id: Number(values.id) });
   };
   return (
     <Modal
@@ -46,7 +48,7 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
           name="color"
           rules={[{ pattern: /#[a-f0-9A-F]{3,8}/, message: '请输入颜色值' }]}
         >
-          <Input placeholder="请输入" />
+          <ColorPicer value={values.color} placeholder="请选择" />
         </FormItem>
         <FormItem
           labelCol={{ span: 5 }}
@@ -54,7 +56,18 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
           label="角色图标"
           name="iconUrl"
         >
-          <Input placeholder="请输入" />
+          <Select>
+            <Option value="1">一级</Option>
+            <Option value="2">二级</Option>
+            <Option value="3">三级</Option>
+            <Option value="4">四级</Option>
+            <Option value="5">五级</Option>
+            <Option value="6">六级</Option>
+            <Option value="7">七级</Option>
+            <Option value="8">八级</Option>
+            <Option value="9">九级</Option>
+            <Option value="10">十级</Option>
+          </Select>
         </FormItem>
       </Form>
     </Modal>

@@ -1,12 +1,13 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message } from 'antd';
-import React, { useState, useRef, Fragment } from 'react';
+import { Button, Dropdown, Menu, message, Divider } from 'antd';
+import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
-import { RoleModel } from './data';
+import { RoleModel } from './types';
 import { query, update, create, remove } from './service';
+import styles from './index.less';
 
 /**
  * 添加节点
@@ -70,16 +71,26 @@ const TableList: React.FC<{}> = () => {
     {
       title: '颜色',
       dataIndex: 'color',
+      render: (_, record) => (
+        record.color ?
+          <span className={styles.block} style={{ backgroundColor: record.color }}></span>
+          : null
+      ),
     },
     {
       title: '图标',
       dataIndex: 'iconUrl',
+      render: (_, record) => (
+        record.iconUrl ?
+          <span className={styles.icon} style={{ borderColor: record.color, color: record.color }}>{record.iconUrl}</span>
+          : null
+      ),
     },
     {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
-      render: (_, record, index) => (
+      render: (_, record, _1, action) => (
         <>
           <a
             onClick={() => {
@@ -88,6 +99,15 @@ const TableList: React.FC<{}> = () => {
             }}
           >
             修改
+          </a>
+          <Divider type="vertical" />
+          <a
+            onClick={async () => {
+              await handleRemove([record]);
+              action.reload();
+            }}
+          >
+            删除
           </a>
         </>
       ),
@@ -117,7 +137,6 @@ const TableList: React.FC<{}> = () => {
                   selectedKeys={[]}
                 >
                   <Menu.Item key="remove">批量删除</Menu.Item>
-                  <Menu.Item key="approval">批量审批</Menu.Item>
                 </Menu>
               }
             >
@@ -127,12 +146,12 @@ const TableList: React.FC<{}> = () => {
             </Dropdown>
           ),
         ]}
-        tableAlertRender={(selectedRowKeys, _) => (
+        tableAlertRender={selectedRowKeys => (
           <div>
             已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项
           </div>
         )}
-        request={params => query(params)}
+        request={() => query()}
         columns={columns}
         rowSelection={{}}
         pagination={false}
