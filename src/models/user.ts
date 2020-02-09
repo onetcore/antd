@@ -1,11 +1,14 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
+import { stringify } from 'querystring';
+import { router } from 'umi';
 
-import { queryCurrent, query as queryUsers } from '@/services/user';
+import { queryCurrent, query as queryUsers, fakeLogout } from '@/services/user';
+import { getPageQuery } from '@/utils/utils';
 
 export interface CurrentUser {
   avatar?: string;
-  realName: string;
+  realName?: string;
   title?: string;
   group?: string;
   signature?: string;
@@ -27,6 +30,7 @@ export interface UserModelType {
   effects: {
     fetch: Effect;
     fetchCurrent: Effect;
+    logout: Effect;
   };
   reducers: {
     saveCurrentUser: Reducer<UserModelState>;
@@ -38,7 +42,7 @@ const UserModel: UserModelType = {
   namespace: 'user',
 
   state: {
-    currentUser: {},
+    currentUser: { id: 0 },
   },
 
   effects: {
@@ -56,6 +60,21 @@ const UserModel: UserModelType = {
         payload: response,
       });
     },
+
+    *logout(_, { call }) {
+      yield call(fakeLogout);
+      localStorage.removeItem('jwt-token');
+      const { redirect } = getPageQuery();
+      // Note: There may be security issues, please note
+      if (window.location.pathname !== '/user/login' && !redirect) {
+        router.replace({
+          pathname: '/user/login',
+          search: stringify({
+            redirect: window.location.href,
+          }),
+        });
+      }
+    },
   },
 
   reducers: {
@@ -65,18 +84,13 @@ const UserModel: UserModelType = {
         currentUser: action.payload || {},
       };
     },
-    changeNotifyCount(
-      state = {
-        currentUser: {},
-      },
-      action,
-    ) {
+    changeNotifyCount(state, {payload}) {
       return {
         ...state,
         currentUser: {
           ...state.currentUser,
-          notifyCount: action.payload.totalCount,
-          unreadCount: action.payload.unreadCount,
+          notifyCount: payload.totalCount,
+          unreadCount: payload.unreadCount,
         },
       };
     },

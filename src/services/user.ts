@@ -14,3 +14,10 @@ export async function queryCurrent(): Promise<any> {
 export async function queryNotices(): Promise<any> {
   return request('/api/notices');
 }
+
+/**
+ * 退出登录。
+ */
+export async function fakeLogout(): Promise<any> {
+  return request('/api/user/logout', { method: 'POST' });
+}

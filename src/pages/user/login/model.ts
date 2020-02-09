@@ -1,9 +1,8 @@
 import { Reducer } from 'redux';
 import { Effect } from 'dva';
-import { stringify } from 'querystring';
 import { router } from 'umi';
 
-import { fakeAccountLogin, fakeLogout } from '@/pages/user/login/service';
+import { fakeAccountLogin } from '@/pages/user/login/service';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 
@@ -19,7 +18,6 @@ export interface LoginModelType {
   state: StateType;
   effects: {
     login: Effect;
-    logout: Effect;
   };
   reducers: {
     changeLoginStatus: Reducer<StateType>;
@@ -59,21 +57,6 @@ const Model: LoginModelType = {
           }
         }
         router.replace(redirect || '/');
-      }
-    },
-
-    *logout({ }, { call }) {
-      yield call(fakeLogout);
-      localStorage.removeItem('jwt-token');
-      const { redirect } = getPageQuery();
-      // Note: There may be security issues, please note
-      if (window.location.pathname !== '/user/login' && !redirect) {
-        router.replace({
-          pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href,
-          }),
-        });
       }
     },
   },

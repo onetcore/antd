@@ -25,10 +25,3 @@ export async function fakeAccountLogin(params: LoginParamsType) {
 export async function getFakeCaptcha(mobile: string) {
   return request(`/api/login/captcha?mobile=${mobile}`);
 }
-
-/**
- * 退出登录。
- */
-export async function fakeLogout(): Promise<any> {
-  return request('/api/user/logout', { method: 'POST' });
-}
