@@ -5,7 +5,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
-import { RoleModel } from './types';
+import { RoleModel } from './model.d';
 import { query, update, create, remove } from './service';
 import styles from './index.less';
 
@@ -16,8 +16,8 @@ import styles from './index.less';
 const handleAdd = async (fields: RoleModel) => {
   const hide = message.loading('正在添加');
   const response = await create(fields);
-  if (response.status === 'ok') {
-    hide();
+  hide();
+  if (response.status) {
     message.success('添加成功');
     return true;
   }
@@ -32,7 +32,7 @@ const handleAdd = async (fields: RoleModel) => {
 const handleUpdate = async (fields: RoleModel) => {
   const hide = message.loading('正在更新角色');
   const response = await update(fields);
-  if (response.status === 'ok') {
+  if (response.status) {
     hide();
     message.success('更新成功');
     return true;
@@ -49,7 +49,7 @@ const handleRemove = async (selectedRows: RoleModel[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   const response = await remove(selectedRows.map(row => row.id));
-  if (response.status === 'ok') {
+  if (response.status) {
     hide();
     message.success('删除成功，即将刷新');
     return true;
@@ -103,8 +103,9 @@ const TableList: React.FC<{}> = () => {
           <Divider type="vertical" />
           <a
             onClick={async () => {
-              await handleRemove([record]);
-              action.reload();
+              if (await handleRemove([record])) {
+                action.reload();
+              }
             }}
           >
             删除

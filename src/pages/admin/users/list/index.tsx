@@ -3,52 +3,42 @@ import { Button, Divider, Dropdown, Menu, message } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
+import { SorterResult } from 'antd/lib/table/interface';
 import CreateForm from './components/CreateForm';
-import UpdateForm, { FormValueType } from './components/UpdateForm';
-import { UserModel } from './data.d';
-import { query, updateRule, addRule, removeRule } from './service';
+import UpdateForm from './components/UpdateForm';
+import { UserModel, CreateUserModel, UpdateUserModel } from './model.d';
+import { query, update, create, remove, find } from './service';
 
 /**
  * 添加节点
  * @param fields
  */
-const handleAdd = async (fields: FormValueType) => {
+const handleAdd = async (fields: CreateUserModel) => {
   const hide = message.loading('正在添加');
-  try {
-    await addRule({
-      desc: fields.desc,
-    });
-    hide();
+  const result = await create(fields);
+  hide();
+  if (result.status) {
     message.success('添加成功');
     return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
   }
+  message.error(result.message);
+  return false;
 };
 
 /**
  * 更新节点
  * @param fields
  */
-const handleUpdate = async (fields: FormValueType) => {
+const handleUpdate = async (fields: UpdateUserModel) => {
   const hide = message.loading('正在配置');
-  try {
-    await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
-    hide();
-
-    message.success('配置成功');
+  const result = await update(fields);
+  hide();
+  if (result.status) {
+    message.success('更新成功');
     return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
   }
+  message.error(result.message);
+  return false;
 };
 
 /**
@@ -58,18 +48,14 @@ const handleUpdate = async (fields: FormValueType) => {
 const handleRemove = async (selectedRows: UserModel[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
-  try {
-    await removeRule({
-      key: selectedRows.map(row => row.id),
-    });
-    hide();
+  const result = await remove(selectedRows.map(row => row.id));
+  hide();
+  if (result.status) {
     message.success('删除成功，即将刷新');
     return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
   }
+  message.error(result.message);
+  return false;
 };
 
 const TableList: React.FC<{}> = () => {
@@ -104,18 +90,26 @@ const TableList: React.FC<{}> = () => {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
-      render: (_, record) => (
+      render: (_, record, _1, action) => (
         <>
           <a
-            onClick={() => {
-              handleUpdateModalVisible(true);
-              setStepFormValues(record);
+            onClick={async () => {
+              const result = await find(record.id);
+              if (result.status) {
+                handleUpdateModalVisible(true);
+                setStepFormValues(result.data);
+              }
             }}
           >
-            配置
+            修改
           </a>
           <Divider type="vertical" />
-          <a href="">订阅警报</a>
+          <a
+            onClick={async () => {
+              if (await handleRemove([record])) {
+                action.reload();
+              }
+            }}>删除</a>
         </>
       ),
     },
@@ -128,8 +122,11 @@ const TableList: React.FC<{}> = () => {
         actionRef={actionRef}
         rowKey="id"
         onChange={(_, _filter, _sorter) => {
-          setSo(_sorter.order);
-          setSb(_sorter.field);
+          const sorter = _sorter as SorterResult<UserModel>;
+          if (sorter != null) {
+            setSo(sorter.order);
+            setSb(sorter.field);
+          }
         }}
         params={{
           so,
@@ -162,7 +159,7 @@ const TableList: React.FC<{}> = () => {
             </Dropdown>
           ),
         ]}
-        tableAlertRender={(selectedRowKeys, _) => (
+        tableAlertRender={selectedRowKeys => (
           <div>
             已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项
           </div>
@@ -183,6 +180,7 @@ const TableList: React.FC<{}> = () => {
         }}
         onCancel={() => handleModalVisible(false)}
         modalVisible={createModalVisible}
+        values={stepFormValues as CreateUserModel}
       />
       {stepFormValues && Object.keys(stepFormValues).length ? (
         <UpdateForm
@@ -201,7 +199,7 @@ const TableList: React.FC<{}> = () => {
             setStepFormValues({});
           }}
           updateModalVisible={updateModalVisible}
-          values={stepFormValues}
+          values={stepFormValues as UpdateUserModel}
         />
       ) : null}
     </PageHeaderWrapper>

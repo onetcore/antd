@@ -39,7 +39,7 @@ const Model: LoginModelType = {
         payload: response,
       });
       // Login successfully
-      if (response.status === 'ok') {
+      if (response.status) {
         localStorage.setItem('jwt-token', response.token);
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();

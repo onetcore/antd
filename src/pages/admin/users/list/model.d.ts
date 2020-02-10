@@ -1,4 +1,4 @@
-import { DataPagination } from '@/models/page';
+import { DataPagination } from '@/models/result';
 /**
  * 用户查询实例。
  */
@@ -31,6 +31,8 @@ export interface UserQuery {
    * 电话号码。
    */
   phoneNumber?: string;
+
+  [key: string]: any;
 }
 
 export interface UserModel extends UserQuery {
@@ -47,39 +49,16 @@ export interface PageData extends DataPagination<UserModel> {
 
 }
 
-export interface TableListItem {
-  key: number;
-  disabled?: boolean;
-  href: string;
-  avatar: string;
-  name: string;
-  title: string;
-  owner: string;
-  desc: string;
-  callNo: number;
-  status: number;
-  updatedAt: Date;
-  createdAt: Date;
-  progress: number;
+export interface CreateUserModel {
+  userName: string;
+  realName?: string;
+  password: string;
+  confirm: string;
+  email?: string;
+  phoneNumber?: string;
+  summary?: string;
 }
 
-export interface TableListPagination {
-  total: number;
-  pageSize: number;
-  current: number;
-}
-
-export interface TableListData {
-  list: TableListItem[];
-  pagination: Partial<TableListPagination>;
-}
-
-export interface TableListParams {
-  sorter?: string;
-  status?: string;
-  name?: string;
-  desc?: string;
-  key?: number;
-  pageSize?: number;
-  currentPage?: number;
+export interface UpdateUserModel extends CreateUserModel {
+  id: number;
 }

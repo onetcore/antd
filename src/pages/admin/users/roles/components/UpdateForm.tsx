@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Input, Modal, Select } from 'antd';
 import ColorPicer from '@/components/ColorPicker';
-import { RoleModel } from '../types';
+import { RoleModel } from '../model.d';
 
 export interface UpdateFormProps {
   onCancel: (flag?: boolean, formVals?: RoleModel) => void;
@@ -18,7 +18,6 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
   const { updateModalVisible, onSubmit: handleUpdate, onCancel, values } = props;
   const okHandle = async () => {
     const fieldsValue = (await form.validateFields()) as RoleModel;
-    form.resetFields();
     handleUpdate({ ...fieldsValue, id: Number(values.id) });
   };
   return (

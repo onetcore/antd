@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { RoleModel } from './types';
+import { RoleModel } from './model.d';
 /**
  * 获取所有角色列表。
  */

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Input, Modal, Select } from 'antd';
 import ColorPicer from '@/components/ColorPicker';
-import { RoleModel } from '../types';
+import { RoleModel } from '../model.d';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -18,7 +18,6 @@ const CreateForm: React.FC<CreateFormProps> = props => {
   const { modalVisible, onSubmit: handleAdd, onCancel } = props;
   const okHandle = async () => {
     const fieldsValue = (await form.validateFields()) as RoleModel;
-    form.resetFields();
     handleAdd(fieldsValue);
   };
   return (
