@@ -18,6 +18,9 @@ export interface CurrentUser {
   }[];
   id: number;
   unreadCount?: number;
+  roleName?: string;
+  roleColor?: string;
+  roleIcon?: string;
 }
 
 export interface UserModelState {

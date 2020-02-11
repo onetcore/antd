@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 import { DataResult } from '@/models/result.d';
-import { CreateUserModel, UpdateUserModel, UserQuery, PageData } from './model.d';
+import { CreateUserModel, UpdateUserModel, UserQuery, PageData, LockoutUserModel } from './model.d';
 
 export async function query(params?: UserQuery): Promise<PageData> {
   return request<PageData>('/api/users', {
@@ -33,6 +33,20 @@ export async function update(params: UpdateUserModel) {
   });
 }
 
-export async function find(id: number):Promise<DataResult<UpdateUserModel>> {
+export async function find(id: number): Promise<DataResult<UpdateUserModel>> {
   return request(`/api/user/get-update?id=${id}`);
+}
+
+export async function lockout(params: LockoutUserModel) {
+  return request('/api/users/lockout', {
+    method: 'POST',
+    data: { ...params }
+  });
+}
+
+export async function unlock(ids: number[]) {
+  return request('/api/users/unlock', {
+    method: 'POST',
+    data: ids
+  });
 }

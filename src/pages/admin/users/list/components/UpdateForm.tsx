@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Modal, Alert } from 'antd';
+import { Form, Input, Modal, Alert, Checkbox } from 'antd';
 import { UpdateUserModel } from '../model.d';
 import styles from './UpdateForm.less';
 
@@ -69,8 +69,11 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
         >
           <Input placeholder="请输入" />
         </FormItem>
-        <FormItem name="summary" label="描述">
-          <TextArea rows={4} placeholder="请输入符" />
+        <FormItem valuePropName="checked" name="lockoutEnabled" label="启用锁定">
+          <Checkbox>当登录错误次数达到5次时，将被锁定1小时</Checkbox>
+        </FormItem>
+        <FormItem name="summary" label="备注">
+          <TextArea rows={4} placeholder="请输入" />
         </FormItem>
       </Form>
     </Modal>

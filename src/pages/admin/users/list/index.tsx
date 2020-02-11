@@ -1,13 +1,14 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, Dropdown, Menu, message } from 'antd';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, Fragment } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import { SorterResult } from 'antd/lib/table/interface';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
-import { UserModel, CreateUserModel, UpdateUserModel } from './model.d';
-import { query, update, create, remove, find } from './service';
+import { UserModel, CreateUserModel, UpdateUserModel, LockoutUserModel } from './model.d';
+import { query, update, create, remove, find, unlock, lockout } from './service';
+import LockoutForm from './components/LockoutForm';
 
 /**
  * 添加节点
@@ -58,11 +59,44 @@ const handleRemove = async (selectedRows: UserModel[]) => {
   return false;
 };
 
-const TableList: React.FC<{}> = () => {
+/**
+ *  解锁用户
+ * @param selectedRows
+ */
+const handleUnlock = async (selectedRows: UserModel[]) => {
+  const hide = message.loading('正在解锁');
+  if (!selectedRows) return true;
+  const result = await unlock(selectedRows.map(row => row.id));
+  hide();
+  if (result.status) {
+    message.success('解锁成功，即将刷新');
+    return true;
+  }
+  message.error(result.message);
+  return false;
+};
+
+/**
+ *  锁定用户
+ */
+const handleLockout = async (model: LockoutUserModel) => {
+  const hide = message.loading('正在锁定');
+  const result = await lockout(model);
+  hide();
+  if (result.status) {
+    message.success('锁定成功，即将刷新');
+    return true;
+  }
+  message.error(result.message);
+  return false;
+};
+
+const UserList: React.FC<{}> = () => {
   const [sb, setSb] = useState();
   const [so, setSo] = useState();
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
+  const [lockoutModalVisible, handleLockoutModalVisible] = useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<UserModel>[] = [
@@ -141,15 +175,24 @@ const TableList: React.FC<{}> = () => {
               overlay={
                 <Menu
                   onClick={async e => {
-                    if (e.key === 'remove') {
-                      await handleRemove(selectedRows);
-                      action.reload();
+                    switch (e.key) {
+                      case 'remove':
+                        if (await handleRemove(selectedRows)) { action.reload(); }
+                        break;
+                      case 'lockout':
+                        handleLockoutModalVisible(true);
+                        setStepFormValues({ ids: selectedRows.map(x => x.id) });
+                        break;
+                      default:
+                        if (await handleUnlock(selectedRows)) { action.reload(); }
+                        break;
                     }
                   }}
                   selectedKeys={[]}
                 >
                   <Menu.Item key="remove">批量删除</Menu.Item>
-                  <Menu.Item key="approval">批量审批</Menu.Item>
+                  <Menu.Item key="lockout">锁定用户</Menu.Item>
+                  <Menu.Item key="unlock">解锁用户</Menu.Item>
                 </Menu>
               }
             >
@@ -183,27 +226,47 @@ const TableList: React.FC<{}> = () => {
         values={stepFormValues as CreateUserModel}
       />
       {stepFormValues && Object.keys(stepFormValues).length ? (
-        <UpdateForm
-          onSubmit={async value => {
-            const success = await handleUpdate(value);
-            if (success) {
-              handleModalVisible(false);
-              setStepFormValues({});
-              if (actionRef.current) {
-                actionRef.current.reload();
+        <Fragment>
+          <UpdateForm
+            onSubmit={async value => {
+              const success = await handleUpdate(value);
+              if (success) {
+                handleModalVisible(false);
+                setStepFormValues({});
+                if (actionRef.current) {
+                  actionRef.current.reload();
+                }
               }
-            }
-          }}
-          onCancel={() => {
-            handleUpdateModalVisible(false);
-            setStepFormValues({});
-          }}
-          updateModalVisible={updateModalVisible}
-          values={stepFormValues as UpdateUserModel}
-        />
+            }}
+            onCancel={() => {
+              handleUpdateModalVisible(false);
+              setStepFormValues({});
+            }}
+            updateModalVisible={updateModalVisible}
+            values={stepFormValues as UpdateUserModel}
+          />
+          <LockoutForm
+            onSubmit={async value => {
+              const success = await handleLockout(value);
+              if (success) {
+                handleLockoutModalVisible(false);
+                setStepFormValues({});
+                if (actionRef.current) {
+                  actionRef.current.reload();
+                }
+              }
+            }}
+            onCancel={() => {
+              handleLockoutModalVisible(false);
+              setStepFormValues({});
+            }}
+            modalVisible={lockoutModalVisible}
+            values={stepFormValues as LockoutUserModel}
+          />
+        </Fragment>
       ) : null}
     </PageHeaderWrapper>
   );
 };
 
-export default TableList;
+export default UserList;

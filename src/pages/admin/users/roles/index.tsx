@@ -1,4 +1,4 @@
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusOutlined, CheckOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Menu, message, Divider } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -58,7 +58,7 @@ const handleRemove = async (selectedRows: RoleModel[]) => {
   return false;
 };
 
-const TableList: React.FC<{}> = () => {
+const RoleList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
@@ -76,6 +76,16 @@ const TableList: React.FC<{}> = () => {
           <span className={styles.block} style={{ backgroundColor: record.color }}></span>
           : null
       ),
+    },
+    {
+      title: '后台角色',
+      dataIndex: 'isSystem',
+      render: (_, record) => (record.isSystem ? <CheckOutlined /> : null),
+    },
+    {
+      title: '默认角色',
+      dataIndex: 'isDefault',
+      render: (_, record) => (record.isDefault ? <CheckOutlined /> : null),
     },
     {
       title: '图标',
@@ -194,4 +204,4 @@ const TableList: React.FC<{}> = () => {
   );
 };
 
-export default TableList;
+export default RoleList;

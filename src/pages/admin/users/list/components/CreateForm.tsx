@@ -21,6 +21,11 @@ const CreateForm: React.FC<CreateFormProps> = props => {
     handleAdd(fieldsValue);
   };
 
+  const formLayout = {
+    labelCol: { span: 7 },
+    wrapperCol: { span: 13 },
+  };
+
   const compare = (_, value, callback) => {
     if (value && value !== form.getFieldValue('password')) {
       callback('密码和确认密码不匹配！');
@@ -37,10 +42,8 @@ const CreateForm: React.FC<CreateFormProps> = props => {
       onOk={okHandle}
       onCancel={() => onCancel()}
     >
-      <Form form={form}>
+      <Form {...formLayout} form={form}>
         <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
           label="用户名称"
           name="userName"
           rules={[{
@@ -52,16 +55,12 @@ const CreateForm: React.FC<CreateFormProps> = props => {
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
           label="真实姓名"
           name="realName"
         >
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
           label="密码"
           name="password"
           rules={[{ required: true, message: '请输入6-16个字符！', min: 6, max: 16 }]}
@@ -69,8 +68,6 @@ const CreateForm: React.FC<CreateFormProps> = props => {
           <Password placeholder="请输入" />
         </FormItem>
         <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
           label="确认密码"
           name="confirm"
           rules={[{ required: true, validator: compare }]}
@@ -78,8 +75,6 @@ const CreateForm: React.FC<CreateFormProps> = props => {
           <Password placeholder="请输入" />
         </FormItem>
         <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
           label="电话号码"
           name="phoneNumber"
           rules={[{ len: 11, message: '请输入正确的手机号码' }]}
@@ -87,8 +82,6 @@ const CreateForm: React.FC<CreateFormProps> = props => {
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
           label="电子邮件"
           name="email"
           rules={[{ type: 'email', message: '请输入正确的电子邮件地址' }]}

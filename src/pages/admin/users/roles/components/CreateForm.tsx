@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Modal, Select } from 'antd';
+import { Form, Input, Modal, Select, Checkbox } from 'antd';
 import ColorPicer from '@/components/ColorPicker';
 import { RoleModel } from '../model.d';
 
@@ -20,6 +20,12 @@ const CreateForm: React.FC<CreateFormProps> = props => {
     const fieldsValue = (await form.validateFields()) as RoleModel;
     handleAdd(fieldsValue);
   };
+
+  const formLayout = {
+    labelCol: { span: 7 },
+    wrapperCol: { span: 13 },
+  };
+
   return (
     <Modal
       destroyOnClose
@@ -28,10 +34,8 @@ const CreateForm: React.FC<CreateFormProps> = props => {
       onOk={okHandle}
       onCancel={() => onCancel()}
     >
-      <Form form={form}>
+      <Form {...formLayout} form={form}>
         <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
           label="角色名称"
           name="name"
           rules={[{ required: true, message: '请输入角色名称' }]}
@@ -39,16 +43,26 @@ const CreateForm: React.FC<CreateFormProps> = props => {
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
           label="颜色"
           name="color"
         >
           <ColorPicer placeholder="请选择" />
         </FormItem>
         <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
+          label="默认角色"
+          name="isDefault"
+          valuePropName="checked"
+        >
+          <Checkbox />
+        </FormItem>
+        <FormItem
+          label="后台管理角色"
+          name="isSystem"
+          valuePropName="checked"
+        >
+          <Checkbox />
+        </FormItem>
+        <FormItem
           label="角色图标"
           name="iconUrl"
         >

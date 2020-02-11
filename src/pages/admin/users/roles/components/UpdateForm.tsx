@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Modal, Select } from 'antd';
+import { Form, Input, Modal, Select, Checkbox } from 'antd';
 import ColorPicer from '@/components/ColorPicker';
 import { RoleModel } from '../model.d';
 
@@ -48,6 +48,23 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
           rules={[{ pattern: /#[a-f0-9A-F]{3,8}/, message: '请输入颜色值' }]}
         >
           <ColorPicer value={values.color} placeholder="请选择" />
+        </FormItem><FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="默认角色"
+          name="isDefault"
+          valuePropName="checked"
+        >
+          <Checkbox />
+        </FormItem>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="后台管理角色"
+          name="isSystem"
+          valuePropName="checked"
+        >
+          <Checkbox />
         </FormItem>
         <FormItem
           labelCol={{ span: 5 }}

@@ -43,6 +43,8 @@ export interface UserModel extends UserQuery {
   loginIP?: string;
   roleName: string;
   lastLoginDate?: Date;
+  lockoutEnd?: Date;
+  lockoutEnabled: boolean;
 }
 
 export interface PageData extends DataPagination<UserModel> {
@@ -61,4 +63,10 @@ export interface CreateUserModel {
 
 export interface UpdateUserModel extends CreateUserModel {
   id: number;
+  lockoutEnabled: boolean;
+}
+
+export interface LockoutUserModel {
+  ids: number[];
+  lockoutEnd?: Date;
 }
