@@ -38,6 +38,7 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
       currentUser = {
         avatar: '',
         realName: '',
+        roleColor: '',
       },
       menu,
     } = this.props;
@@ -66,19 +67,19 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
     return currentUser && currentUser.realName ? (
       <HeaderDropdown overlay={menuHeaderDropdown}>
         <span className={`${styles.action} ${styles.account}`}>
-          <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
-          <span className={styles.name}>{currentUser.realName}</span>
+          <Avatar style={{ color: currentUser.roleColor }} size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
+          <span style={{ color: currentUser.roleColor }} className={styles.name}>{currentUser.realName}</span>
         </span>
       </HeaderDropdown>
     ) : (
-      <Spin
-        size="small"
-        style={{
-          marginLeft: 8,
-          marginRight: 8,
-        }}
-      />
-    );
+        <Spin
+          size="small"
+          style={{
+            marginLeft: 8,
+            marginRight: 8,
+          }}
+        />
+      );
   }
 }
 
