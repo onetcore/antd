@@ -1,5 +1,5 @@
-import { Button, Card, Select, Form, message, Checkbox, Upload, Input } from 'antd';
-import React, { useState, useEffect } from 'react';
+import { Button, Card, Select, Form, message, Checkbox, Input } from 'antd';
+import React, { useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { SettingsModel } from './model.d';
 import { update, query } from './service';
@@ -18,17 +18,24 @@ const handleUpdate = async (values: SettingsModel) => {
   return false;
 }
 
-const Settings: React.FC<{}> = () => {
-  const [settings, setSettings] = useState();
+interface SettingsProps {
+  settings: SettingsModel;
+  submitting?: boolean;
+}
+
+const Settings: React.FC<SettingsProps> = () => {
   const [form] = Form.useForm();
   useEffect(() => {
     query().then(result => {
       if (result.status) {
-        setSettings(result.data);
+        form.setFieldsValue({...result.data});
       }
       else
         message.error('载入配置错误');
     })
+    return () => {
+      form.resetFields();
+    };
   }, []);
 
   const handleSubmit = async () => {
@@ -78,7 +85,6 @@ const Settings: React.FC<{}> = () => {
           style={{
             marginTop: 8,
           }}
-          initialValues={{ ...settings }}
         >
           <FormItem valuePropName="checked" label="是否需要电子邮件确认" name="requiredEmailConfirmed">
             <Checkbox />
@@ -95,14 +101,14 @@ const Settings: React.FC<{}> = () => {
           <FormItem valuePropName="checked" label="使用验证码" name="validCode">
             <Checkbox />
           </FormItem>
-          <FormItem valuePropName='fileList' label="登录页面的背景地址" name="loginBg">
-            <Upload>
-              <Input />
-            </Upload>
+          <FormItem label="登录页面的背景地址" name="loginBg">
+            <Input />
           </FormItem>
           <FormItem label="登录转向" name="loginDirection">
             <Select>
-              <Option value="0">首页</Option>
+              <Option value={0}>首页</Option>
+              <Option value={1}>用户中心</Option>
+              <Option value={2}>后台管理</Option>
             </Select>
           </FormItem>
           <FormItem
