@@ -111,7 +111,7 @@ class Register extends Component<RegisterProps, RegisterState> {
     return 'poor';
   };
 
-  handleSubmit = async (values: UserRegisterParams) => {
+  handleSubmit = values => {
     const { prefix } = this.state;
     const { dispatch } = this.props;
     dispatch({
@@ -324,7 +324,7 @@ class Register extends Component<RegisterProps, RegisterState> {
               userandregister.register.register
             </Button>
             <Link className={styles.login} to="/user/login">
-              userandregister.register.sign-in
+              使用已有账户登录
             </Link>
           </FormItem>
         </Form>

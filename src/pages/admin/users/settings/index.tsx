@@ -85,6 +85,7 @@ const Settings: React.FC<SettingsProps> = () => {
           style={{
             marginTop: 8,
           }}
+          onFinish={handleSubmit}
         >
           <FormItem valuePropName="checked" label="是否需要电子邮件确认" name="requiredEmailConfirmed">
             <Checkbox />
@@ -117,7 +118,7 @@ const Settings: React.FC<SettingsProps> = () => {
               marginTop: 32,
             }}
           >
-            <Button type="primary" onClick={handleSubmit}>
+            <Button type="primary" htmlType="submit">
               提交
               </Button>
           </FormItem>

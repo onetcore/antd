@@ -2,6 +2,7 @@
  * 配置模型。
  */
 export interface SettingsModel {
+    [name: string]: StoreValue;
     /**
      * 是否需要电子邮件确认。
      */
