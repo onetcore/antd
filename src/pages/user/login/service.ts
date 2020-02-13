@@ -23,5 +23,5 @@ export async function fakeAccountLogin(params: LoginParamsType) {
  * @param mobile {string} 电话号码。
  */
 export async function getFakeCaptcha(mobile: string) {
-  return request(`/api/login/captcha?mobile=${mobile}`);
+  return request(`/api/captcha/login?mobile=${mobile}`);
 }

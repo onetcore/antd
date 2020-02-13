@@ -1,324 +1,174 @@
-import { Button, Col, Input, Popover, Progress, Row, message, Form } from 'antd';
-import React, { Component } from 'react';
-import { Dispatch } from 'redux';
-import Link from 'umi/link';
-import { connect } from 'dva';
-import router from 'umi/router';
-import { FormProps, FormInstance } from 'antd/lib/form';
-import { StateType } from './model';
+import React, { useState } from 'react';
+import {
+  Form,
+  Input,
+  Tooltip,
+  Cascader,
+  Select,
+  Row,
+  Col,
+  Checkbox,
+  Button,
+  AutoComplete,
+} from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Link } from 'umi';
 import styles from './style.less';
 
-const FormItem = Form.Item;
-const passwordStatusMap = {
-  ok: <div className={styles.success}>强度：强</div>,
-  pass: <div className={styles.warning}>强度：中</div>,
-  poor: <div className={styles.error}>强度：太短</div>,
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
 };
-const passwordProgressMap: {
-  ok: 'success';
-  pass: 'normal';
-  poor: 'exception';
-} = {
-  ok: 'success',
-  pass: 'normal',
-  poor: 'exception',
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 16,
+      offset: 8,
+    },
+  },
 };
-interface RegisterProps extends FormProps {
-  dispatch: Dispatch<any>;
-  userAndregister: StateType;
-  submitting: boolean;
-}
-interface RegisterState {
-  count: number;
-  confirmDirty: boolean;
-  visible: boolean;
-  help: string;
-}
-export interface UserRegisterParams {
-  mail: string;
-  password: string;
-  confirm: string;
-  mobile: string;
-  captcha: string;
-  prefix: string;
-}
 
-class Register extends Component<RegisterProps, RegisterState> {
-  form = React.createRef<FormInstance>();
+const RegistrationForm = () => {
+  const [form] = Form.useForm();
 
-  state: RegisterState = {
-    count: 0,
-    confirmDirty: false,
-    visible: false,
-    help: ''
+  const onFinish = values => {
+    console.log('Received values of form: ', values);
   };
 
-  interval: number | undefined = undefined;
-
-  componentDidUpdate() {
-    const { userAndregister } = this.props;
-    const account = this.form.current && this.form.current.getFieldValue('mail');
-
-    if (userAndregister.status === 'ok') {
-      message.success('注册成功！');
-      router.push({
-        pathname: '/user/register-result',
-        state: {
-          account,
-        },
-      });
-    }
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  onGetCaptcha = () => {
-    let count = 59;
-    this.setState({
-      count,
-    });
-    this.interval = window.setInterval(() => {
-      count -= 1;
-      this.setState({
-        count,
-      });
-
-      if (count === 0) {
-        clearInterval(this.interval);
-      }
-    }, 1000);
+  const onFinishFailed = ({ errorFields }) => {
+    form.scrollToField(errorFields[0].name);
   };
 
-  getPasswordStatus = () => {
-    if (this.form.current) {
-      const value = this.form.current.getFieldValue('password');
-
-      if (value && value.length > 9) {
-        return 'ok';
-      }
-
-      if (value && value.length > 5) {
-        return 'pass';
-      }
-    }
-
-    return 'poor';
-  };
-
-  handleSubmit = values => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'userAndregister/submit',
-      payload: values,
-    });
-  };
-
-  checkConfirm = (rule: any, value: string, callback: (message?: string) => void) => {
-    if (value && this.form.current && value !== this.form.current.getFieldValue('password')) {
-      callback('两次输入的密码不匹配!');
-    } else {
-      callback();
-    }
-  };
-
-  checkPassword = (rule: any, value: string, callback: (message?: string) => void) => {
-    const { visible, confirmDirty } = this.state;
-
-    if (!value) {
-      this.setState({
-        help: '密码必须填写',
-        visible: !!value,
-      });
-      callback('error');
-    } else {
-      this.setState({
-        help: '',
-      });
-
-      if (!visible) {
-        this.setState({
-          visible: !!value,
-        });
-      }
-
-      if (value.length < 6) {
-        callback('error');
-      } else {
-        if (value && confirmDirty && this.form.current) {
-          this.form.current.validateFields(['confirm']);
-        }
-
-        callback();
-      }
-    }
-  };
-
-  renderPasswordProgress = () => {
-    const value = this.form.current && this.form.current.getFieldValue('password');
-    const passwordStatus = this.getPasswordStatus();
-    return value && value.length ? (
-      <div className={styles[`progress-${passwordStatus}`]}>
-        <Progress
-          status={passwordProgressMap[passwordStatus]}
-          className={styles.progress}
-          strokeWidth={6}
-          percent={value.length * 10 > 100 ? 100 : value.length * 10}
-          showInfo={false}
-        />
-      </div>
-    ) : null;
-  };
-
-  render() {
-    const { submitting } = this.props;
-    const { count, help, visible } = this.state;
-    return (
-      <div className={styles.main}>
-        <h3>用户注册</h3>
-        <Form ref={this.form} onFinish={this.handleSubmit}>
-          <FormItem name="mail" rules={[
-            {
-              required: true,
-              message: '电子邮件必须填写',
-            },
+  return (
+    <div className={styles.main}>
+      <h3>用户注册</h3>
+      <Form
+        {...formItemLayout}
+        form={form}
+        name="register"
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+      >
+        <Form.Item
+          name="email"
+          label="电子邮件"
+          rules={[
             {
               type: 'email',
-              message: '请输入正确的电子邮件地址',
+              message: '请输入正确的电子邮件',
             },
-          ]}><Input size="large" placeholder="电子邮件" />
-          </FormItem>
-          <FormItem name="password" help={help} rules={[
             {
-              validator: this.checkPassword,
+              required: true,
+              message: '请输入电子邮件',
             },
-          ]}>
-            <Popover
-              getPopupContainer={node => {
-                if (node && node.parentNode) {
-                  return node.parentNode as HTMLElement;
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="password"
+          label="密码"
+          rules={[
+            {
+              required: true,
+              message: '请输入密码',
+            },
+          ]}
+          hasFeedback
+        >
+          <Input.Password />
+        </Form.Item>
+
+        <Form.Item
+          name="confirm"
+          label="确认密码"
+          dependencies={['password']}
+          hasFeedback
+          rules={[
+            {
+              required: true,
+              message: '请输入确认密码',
+            },
+            ({ getFieldValue }) => ({
+              validator(rule, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
                 }
-
-                return node;
-              }}
-              content={
-                <div
-                  style={{
-                    padding: '4px 0',
-                  }}
-                >
-                  {passwordStatusMap[this.getPasswordStatus()]}
-                  {this.renderPasswordProgress()}
-                  <div
-                    style={{
-                      marginTop: 10,
-                    }}
-                  >
-                    userandregister.strength.msg
-                  </div>
-                </div>
-              }
-              overlayStyle={{
-                width: 240,
-              }}
-              placement="right"
-              visible={visible}
-            ><Input
-                size="large"
-                type="password"
-                placeholder="密码"
-              />
-            </Popover>
-          </FormItem>
-          <FormItem name="confirm"
-            rules={[
-              {
-                required: true,
-                message: '确认密码必须填写',
+                return Promise.reject('两次输入的密码不一致!');
               },
-              {
-                validator: this.checkConfirm,
-              },
-            ]}><Input
-              size="large"
-              type="password"
-              placeholder="确认密码"
-            />
-          </FormItem>
-          <FormItem name="mobile" rules={[
-            {
-              required: true,
-              message: '手机号码必须填写',
-            },
-            {
-              pattern: /^\d{11}$/,
-              message: '请输入正确的手机号码',
-            },
-          ]}>
-              <Input
-                size="large"
-                placeholder="手机号码"
-              />
-          </FormItem>
-          <FormItem name="captcha" rules={[
-            {
-              required: true,
-              message: '验证码必须填写',
-            },
-          ]}>
-            <Row gutter={8}>
-              <Col span={16}>
-                <Input
-                  size="large"
-                  placeholder="验证码"
-                />
-              </Col>
-              <Col span={8}>
-                <Button
-                  size="large"
-                  disabled={!!count}
-                  className={styles.getCaptcha}
-                  onClick={this.onGetCaptcha}
-                >
-                  {count ? `${count} s` : '获取验证码'}
-                </Button>
-              </Col>
-            </Row>
-          </FormItem>
-          <FormItem>
-            <Button
-              size="large"
-              loading={submitting}
-              className={styles.submit}
-              type="primary"
-              htmlType="submit"
-            >
-              注册
-            </Button>
-            <Link className={styles.login} to="/user/login">
-              使用已有账户登录
-            </Link>
-          </FormItem>
-        </Form>
-      </div>
-    );
-  }
-}
+            }),
+          ]}
+        >
+          <Input.Password />
+        </Form.Item>
 
-export default connect(
-  ({
-    userAndregister,
-    loading,
-  }: {
-    userAndregister: StateType;
-    loading: {
-      effects: {
-        [key: string]: boolean;
-      };
-    };
-  }) => ({
-    userAndregister,
-    submitting: loading.effects['userAndregister/submit'],
-  }),
-)(Register);
+        <Form.Item
+          name="realName"
+          label={
+            <span>
+              真实姓名&nbsp;
+            <Tooltip title="在网站中进行显示的名称">
+                <QuestionCircleOutlined />
+              </Tooltip>
+            </span>
+          }
+          rules={[{ required: true, message: '请输入真实姓名', whitespace: true }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="phoneNumber"
+          label="手机号码"
+          rules={[{ required: true, message: '请输入手机号码' }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item label="Captcha" extra="We must make sure that your are a human.">
+          <Row gutter={8}>
+            <Col span={12}>
+              <Form.Item
+                name="captcha"
+                noStyle
+                rules={[{ required: true, message: 'Please input the captcha you got!' }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Button>Get captcha</Button>
+            </Col>
+          </Row>
+        </Form.Item>
+
+        <Form.Item name="agreement" valuePropName="checked" {...tailFormItemLayout}>
+          <Checkbox>
+            我已经同意 <a href="">用户协议</a>
+          </Checkbox>
+        </Form.Item>
+        <Form.Item {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">
+            注册
+        </Button>
+          <Link className={styles.login} to="/user/login">
+            使用已有账户登录
+          </Link>
+        </Form.Item>
+      </Form>
+    </div>
+  );
+};
+
+export default RegistrationForm;

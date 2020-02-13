@@ -4,7 +4,7 @@ import { RoleModel } from './model.d';
  * 获取所有角色列表。
  */
 export async function query() {
-  return request('/api/roles');
+  return request('/api/admin/roles');
 }
 
 /**
@@ -12,7 +12,7 @@ export async function query() {
  * @param ids {number[]} 角色ID列表。
  */
 export async function remove(ids: number[]) {
-  return request('/api/roles/remove', {
+  return request('/api/admin/roles/remove', {
     method: 'POST',
     data:ids,
   });
@@ -23,7 +23,7 @@ export async function remove(ids: number[]) {
  * @param params {RoleModel} 角色实例。
  */
 export async function create(params: RoleModel) {
-  return request('/api/role/create', {
+  return request('/api/admin/role/create', {
     method: 'POST',
     data: {
       ...params
@@ -36,7 +36,7 @@ export async function create(params: RoleModel) {
  * @param params {RoleModel} 角色实例。
  */
 export async function update(params: RoleModel) {
-  return request('/api/role/update', {
+  return request('/api/admin/role/update', {
     method: 'POST',
     data: {
       ...params
