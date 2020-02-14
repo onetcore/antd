@@ -38,7 +38,7 @@ export interface UserQuery {
 export interface UserModel extends UserQuery {
   id: number;
   userName: string;
-  realName?: string;
+  nickName?: string;
   createdIP?: string;
   loginIP?: string;
   roleName: string;
@@ -53,7 +53,7 @@ export interface PageData extends DataPagination<UserModel> {
 
 export interface CreateUserModel {
   userName: string;
-  realName?: string;
+  nickName?: string;
   password: string;
   confirm: string;
   email?: string;

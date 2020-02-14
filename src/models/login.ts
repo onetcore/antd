@@ -2,7 +2,7 @@ import { Reducer } from 'redux';
 import { Effect } from 'dva';
 import { router } from 'umi';
 
-import { fakeAccountLogin } from '@/pages/user/login/service';
+import { fakeAccountLogin } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 

@@ -26,12 +26,11 @@ const CreateForm: React.FC<CreateFormProps> = props => {
     wrapperCol: { span: 13 },
   };
 
-  const compare = (_, value, callback) => {
+  const compare = (_, value) => {
     if (value && value !== form.getFieldValue('password')) {
-      callback('密码和确认密码不匹配！');
-    } else {
-      callback();
+      return Promise.reject(Error('密码和确认密码不匹配！'));
     }
+    return Promise.resolve();
   };
 
   return (
@@ -55,8 +54,8 @@ const CreateForm: React.FC<CreateFormProps> = props => {
           <Input placeholder="请输入" />
         </FormItem>
         <FormItem
-          label="真实姓名"
-          name="realName"
+          label="昵称"
+          name="nickName"
         >
           <Input placeholder="请输入" />
         </FormItem>
@@ -70,6 +69,7 @@ const CreateForm: React.FC<CreateFormProps> = props => {
         <FormItem
           label="确认密码"
           name="confirm"
+          dependencies={['password']}
           rules={[{ required: true, validator: compare }]}
         >
           <Password placeholder="请输入" />

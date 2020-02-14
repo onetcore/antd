@@ -30,6 +30,14 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
     const fieldsValue = (await form.validateFields()) as UpdateUserModel;
     handleUpdate({ ...fieldsValue, id: values.id, userName: values.userName });
   };
+
+  const compare = (_, value) => {
+    if (value && value !== form.getFieldValue('password')) {
+      return Promise.reject(Error('密码和确认密码不匹配！'));
+    }
+    return Promise.resolve();
+
+  };
   return (
     <Modal
       {...formLayout}
@@ -46,15 +54,18 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
       >
         <Alert className={styles.alert} type="warning" showIcon message="如果没有修改密码，请留空！" />
         <FormItem
-          name="realName"
-          label="真实姓名"
+          name="nickName"
+          label="昵称"
         >
           <Input placeholder="请输入" />
         </FormItem>
-        <FormItem name="password" label="密码">
+        <FormItem name="password" label="密码"
+          rules={[{ message: '请输入6-16个字符！', min: 6, max: 16 }]}>
           <Password placeholder="请输入密码" />
         </FormItem>
-        <FormItem name="confirm" label="确认密码">
+        <FormItem name="confirm" label="确认密码"
+          dependencies={['password']}
+          rules={[{ validator: compare }]}>
           <Password placeholder="请输入确认密码" />
         </FormItem>
         <FormItem

@@ -8,7 +8,7 @@ import { getPageQuery } from '@/utils/utils';
 
 export interface CurrentUser {
   avatar?: string;
-  realName?: string;
+  nickName?: string;
   title?: string;
   group?: string;
   signature?: string;

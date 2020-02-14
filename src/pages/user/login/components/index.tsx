@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import useMergeValue from 'use-merge-value';
 import classNames from 'classnames';
 import { FormInstance } from 'antd/es/form';
-import { LoginParamsType } from '@/pages/user/login/service';
+import { LoginParamsType } from '@/services/login';
 import LoginContext from './LoginContext';
 import LoginItem, { LoginItemProps } from './LoginItem';
 

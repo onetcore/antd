@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 
 import omit from 'omit.js';
 import { FormItemProps } from 'antd/es/form/FormItem';
-import { getFakeCaptcha } from '@/pages/user/login/service';
+import { getFakeCaptcha } from '@/services/login';
 import ItemMap from './map';
 import LoginContext, { LoginContextProps } from './LoginContext';
 import styles from './index.less';

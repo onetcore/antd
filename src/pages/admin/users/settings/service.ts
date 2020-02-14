@@ -2,12 +2,12 @@ import request from '@/utils/request';
 import { SettingsModel } from './model.d';
 
 export async function update(params: SettingsModel) {
-  return request('/api/users/settings', {
+  return request('/api/admin/users/settings', {
     method: 'POST',
     data: params,
   });
 }
 
 export async function query(){
-  return request('/api/users/get-settings');
+  return request('/api/admin/users/get-settings');
 }

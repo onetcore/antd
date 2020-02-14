@@ -61,12 +61,13 @@ request.interceptors.request.use((url, options) => {
   if (token != null) {
     const headers = {
       Authorization: `Bearer ${token}`,
+      'Access-Control-Allow-Origin': '*',
     };
     return ({ url, options: { ...options, headers } })
   }
   return ({
-      url,
-      options,
+    url,
+    options,
   });
 });
 

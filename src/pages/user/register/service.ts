@@ -1,8 +1,8 @@
 import request from '@/utils/request';
-import { UserRegisterParams } from './index';
+import { RegisterUserModel } from './model.d';
 
-export async function fakeRegister(params: UserRegisterParams) {
-  return request('/api/account/register', {
+export async function fakeRegister(params: RegisterUserModel) {
+  return request('/api/register', {
     method: 'POST',
     data: params,
   });

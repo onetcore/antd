@@ -103,7 +103,7 @@ const UserList: React.FC<{}> = () => {
     {
       title: '名称',
       dataIndex: 'name',
-      render: (_, d) => d.realName ? `${d.realName}(${d.userName})` : d.realName,
+      render: (_, d) => d.nickName ? `${d.nickName}(${d.userName})` : d.nickName,
     },
     {
       title: '电子邮件',
