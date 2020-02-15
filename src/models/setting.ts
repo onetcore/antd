@@ -1,11 +1,18 @@
 import { Reducer } from 'redux';
-import defaultSettings, { DefaultSettings } from '../../config/defaultSettings';
+import { Effect } from 'dva';
+import { getSetting, saveSetting } from '@/services/setting';
+import { message } from 'antd';
+import defaultSettings, { SiteSettings } from '../../config/siteSettings';
 
 export interface SettingModelType {
   namespace: 'settings';
-  state: DefaultSettings;
+  state: SiteSettings;
+  effects: {
+    loadSettings: Effect;
+    saveSettings: Effect;
+  },
   reducers: {
-    changeSetting: Reducer<DefaultSettings>;
+    changeSetting: Reducer<SiteSettings>;
   };
 }
 
@@ -19,6 +26,30 @@ const updateColorWeak: (colorWeak: boolean) => void = colorWeak => {
 const SettingModel: SettingModelType = {
   namespace: 'settings',
   state: defaultSettings,
+  effects: {
+    *loadSettings(_, { call, put }) {
+      const result = yield call(getSetting);
+      if (result.status) {
+        yield put({
+          type: 'changeSetting',
+          payload: result.data,
+        });
+      } else {
+        message.error(result.message);
+      }
+    },
+    *saveSettings({ payload }, { call, put }) {
+      const result = yield call(saveSetting, payload);
+      if (result.status) {
+        yield put({
+          type: 'changeSetting',
+          payload,
+        });
+      } else {
+        message.error(result.message);
+      }
+    }
+  },
   reducers: {
     changeSetting(state = defaultSettings, { payload }) {
       const { colorWeak, contentWidth } = payload;

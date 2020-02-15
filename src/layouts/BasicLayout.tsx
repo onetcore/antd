@@ -19,7 +19,7 @@ import { Result, Button } from 'antd';
 import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
-import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
+import { getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
 
 const noMatch = (
@@ -85,31 +85,25 @@ const defaultFooterDom = (
   />
 );
 
-const footerRender: BasicLayoutProps['footerRender'] = () => {
-  if (!isAntDesignPro()) {
-    return defaultFooterDom;
-  }
-
-  return (
-    <>
-      {defaultFooterDom}
-      <div
-        style={{
-          padding: '0px 24px 24px',
-          textAlign: 'center',
-        }}
-      >
-        <a href="https://www.netlify.com" target="_blank" rel="noopener noreferrer">
-          <img
-            src="https://www.netlify.com/img/global/badges/netlify-color-bg.svg"
-            width="82px"
-            alt="netlify logo"
-          />
-        </a>
-      </div>
-    </>
-  );
-};
+const footerRender: BasicLayoutProps['footerRender'] = () => (
+  <>
+    {defaultFooterDom}
+    <div
+      style={{
+        padding: '0px 24px 24px',
+        textAlign: 'center',
+      }}
+    >
+      <a href="https://www.netlify.com" target="_blank" rel="noopener noreferrer">
+        <img
+          src="https://www.netlify.com/img/global/badges/netlify-color-bg.svg"
+          width="82px"
+          alt="netlify logo"
+        />
+      </a>
+    </div>
+  </>
+);
 
 const BasicLayout: React.FC<BasicLayoutProps> = props => {
   const {
@@ -126,9 +120,10 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
 
   useEffect(() => {
     if (dispatch) {
-      dispatch({
-        type: 'user/fetchCurrent',
-      });
+      // 获取当前用户
+      dispatch({type: 'user/fetchCurrent', });
+      // 获取网站配置
+      dispatch({ type: 'settings/loadSettings' });
     }
   }, []);
   /**
@@ -147,6 +142,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   const authorized = getAuthorityFromRouter(props.route.routes, location.pathname || '/') || {
     authority: undefined,
   };
+
   return (
     <ProLayout
       logo={logo}
@@ -177,8 +173,8 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
         return first ? (
           <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
         ) : (
-          <span>{route.breadcrumbName}</span>
-        );
+            <span>{route.breadcrumbName}</span>
+          );
       }}
       footerRender={footerRender}
       menuDataRender={menuDataRender}
@@ -195,5 +191,5 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
 
 export default connect(({ global, settings }: ConnectState) => ({
   collapsed: global.collapsed,
-  settings,
+  settings
 }))(BasicLayout);
