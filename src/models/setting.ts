@@ -45,6 +45,7 @@ const SettingModel: SettingModelType = {
           type: 'changeSetting',
           payload,
         });
+        message.success('已经成功更新');
       } else {
         message.error(result.message);
       }

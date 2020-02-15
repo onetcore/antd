@@ -1,47 +1,34 @@
 import { Button, Card, Select, Form, message, Checkbox, Input } from 'antd';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { SettingsModel } from './model.d';
-import { update, query } from './service';
+import { connect } from 'dva';
+import { ConnectState } from '@/models/connect';
+import { Dispatch, AnyAction } from 'redux';
+import { SiteSettings } from '../../../../../config/siteSettings';
 
 const FormItem = Form.Item;
 const { Option } = Select;
-const handleUpdate = async (values: SettingsModel) => {
-  const hide = message.loading('正在更新');
-  const result = await update(values);
-  hide();
-  if (result.status) {
-    message.success('已经成功更新');
-    return true;
-  }
-  message.error(result.message);
-  return false;
-}
 
 interface SettingsProps {
-  settings: SettingsModel;
+  dispatch: Dispatch<AnyAction>;
+  settings: SiteSettings;
   submitting?: boolean;
 }
 
-const Settings: React.FC<SettingsProps> = () => {
+const Settings: React.FC<SettingsProps> = props => {
   const [form] = Form.useForm();
-  useEffect(() => {
-    query().then(result => {
-      if (result.status) {
-        form.setFieldsValue({...result.data});
-      }
-      else
-        message.error('载入配置错误');
-    })
-    return () => {
-      form.resetFields();
-    };
-  }, []);
+  const { settings, submitting, dispatch } = props;
 
   const handleSubmit = async () => {
-    const fieldValues = (await form.validateFields()) as SettingsModel;
-    await handleUpdate(fieldValues);
+    const fieldValues = (await form.validateFields()) as SiteSettings;
+    const hide = message.loading('正在更新');
+    dispatch({
+      type: 'settings/saveSettings',
+      payload: fieldValues
+    })
+    hide();
   };
+
   const formItemLayout = {
     labelCol: {
       xs: {
@@ -86,24 +73,18 @@ const Settings: React.FC<SettingsProps> = () => {
             marginTop: 8,
           }}
           onFinish={handleSubmit}
+          initialValues={settings}
         >
+          <FormItem label="网站名称" name="title"
+            rules={[{ required: true, message: '请输入网站名称' }]}
+          >
+            <Input />
+          </FormItem>
           <FormItem valuePropName="checked" label="是否需要电子邮件确认" name="requiredEmailConfirmed">
-            <Checkbox />
-          </FormItem>
-          <FormItem valuePropName="checked" label="是否需要电话号码确认" name="requiredPhoneNumberConfirmed">
-            <Checkbox />
-          </FormItem>
-          <FormItem valuePropName="checked" label="开启二次验证" name="requiredTwoFactorEnabled">
             <Checkbox />
           </FormItem>
           <FormItem valuePropName="checked" label="开启注册" name="registrable">
             <Checkbox />
-          </FormItem>
-          <FormItem valuePropName="checked" label="使用验证码" name="validCode">
-            <Checkbox />
-          </FormItem>
-          <FormItem label="登录页面的背景地址" name="loginBg">
-            <Input />
           </FormItem>
           <FormItem label="登录转向" name="loginDirection">
             <Select>
@@ -118,7 +99,7 @@ const Settings: React.FC<SettingsProps> = () => {
               marginTop: 32,
             }}
           >
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={submitting}>
               提交
               </Button>
           </FormItem>
@@ -128,4 +109,7 @@ const Settings: React.FC<SettingsProps> = () => {
   );
 }
 
-export default Settings;
+export default connect(({ settings, loading }: ConnectState) => ({
+  settings,
+  submitting: loading.effects['settings/loadSettings']
+}))(Settings);

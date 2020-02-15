@@ -14,12 +14,12 @@ import React, { useEffect } from 'react';
 import { Link } from 'umi';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
-import { GithubOutlined } from '@ant-design/icons';
 import { Result, Button } from 'antd';
 import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { getAuthorityFromRouter } from '@/utils/utils';
+import moment from 'moment';
 import logo from '../assets/logo.svg';
 
 const noMatch = (
@@ -59,51 +59,11 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] =>
     return Authorized.check(item.authority, localItem, null) as MenuDataItem;
   });
 
-const defaultFooterDom = (
-  <DefaultFooter
-    copyright="2019 蚂蚁金服体验技术部出品"
-    links={[
-      {
-        key: 'Ant Design Pro',
-        title: 'Ant Design Pro',
-        href: 'https://pro.ant.design',
-        blankTarget: true,
-      },
-      {
-        key: 'github',
-        title: <GithubOutlined />,
-        href: 'https://github.com/ant-design/ant-design-pro',
-        blankTarget: true,
-      },
-      {
-        key: 'Ant Design',
-        title: 'Ant Design',
-        href: 'https://ant.design',
-        blankTarget: true,
-      },
-    ]}
-  />
-);
-
-const footerRender: BasicLayoutProps['footerRender'] = () => (
-  <>
-    {defaultFooterDom}
-    <div
-      style={{
-        padding: '0px 24px 24px',
-        textAlign: 'center',
-      }}
-    >
-      <a href="https://www.netlify.com" target="_blank" rel="noopener noreferrer">
-        <img
-          src="https://www.netlify.com/img/global/badges/netlify-color-bg.svg"
-          width="82px"
-          alt="netlify logo"
-        />
-      </a>
-    </div>
-  </>
-);
+const footerRender: BasicLayoutProps['footerRender'] = props => (<DefaultFooter
+  copyright={`${moment().year()} ${props.title}`}
+  links={[]}
+/>
+)
 
 const BasicLayout: React.FC<BasicLayoutProps> = props => {
   const {
@@ -121,7 +81,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   useEffect(() => {
     if (dispatch) {
       // 获取当前用户
-      dispatch({type: 'user/fetchCurrent', });
+      dispatch({ type: 'user/fetchCurrent', });
       // 获取网站配置
       dispatch({ type: 'settings/loadSettings' });
     }

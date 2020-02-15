@@ -1,10 +1,11 @@
 import { DefaultFooter, MenuDataItem, getMenuData, getPageTitle } from '@ant-design/pro-layout';
 import { Helmet } from 'react-helmet';
 import { Link } from 'umi';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { formatMessage } from 'umi-plugin-react/locale';
 import { connect } from 'dva';
 import { ConnectProps, ConnectState } from '@/models/connect';
+import moment from 'moment';
 import logo from '../assets/logo.svg';
 import styles from './UserLayout.less';
 
@@ -12,6 +13,10 @@ export interface UserLayoutProps extends ConnectProps {
   breadcrumbNameMap: {
     [path: string]: MenuDataItem;
   };
+  description: string;
+  shortName: string;
+  logoUrl: string;
+  title: string;
 }
 
 const UserLayout: React.FC<UserLayoutProps> = props => {
@@ -19,7 +24,19 @@ const UserLayout: React.FC<UserLayoutProps> = props => {
     route = {
       routes: [],
     },
+    description,
+    shortName,
+    dispatch,
+    title,
   } = props;
+
+  useEffect(() => {
+    if (dispatch) {
+      // 获取网站配置
+      dispatch({ type: 'settings/loadSettings' });
+    }
+  }, []);
+
   const { routes = [] } = route;
   const {
     children,
@@ -28,7 +45,7 @@ const UserLayout: React.FC<UserLayoutProps> = props => {
     },
   } = props;
   const { breadcrumb } = getMenuData(routes);
-  const title = getPageTitle({
+  const pageTitle = getPageTitle({
     pathname: location.pathname,
     formatMessage,
     breadcrumb,
@@ -37,8 +54,8 @@ const UserLayout: React.FC<UserLayoutProps> = props => {
   return (
     <>
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={title} />
+        <title>{pageTitle}</title>
+        <meta name="description" content={description} />
       </Helmet>
 
       <div className={styles.container}>
@@ -50,14 +67,14 @@ const UserLayout: React.FC<UserLayoutProps> = props => {
             <div className={styles.header}>
               <Link to="/">
                 <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>Ant Design</span>
+                <span className={styles.title}>{shortName}</span>
               </Link>
             </div>
-            <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+            <div className={styles.desc}>{description}</div>
           </div>
           {children}
         </div>
-        <DefaultFooter />
+        <DefaultFooter links={[]} copyright={`${moment().year()} ${title}`} />
       </div>
     </>
   );

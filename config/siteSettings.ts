@@ -2,6 +2,24 @@ import { MenuTheme } from 'antd/es/menu/MenuContext';
 
 export type ContentWidth = 'Fluid' | 'Fixed';
 
+/**
+ * 登陆后的转向类型。
+ */
+export enum LoginDirection {
+  /**
+   *  首页。
+   * */
+  Default,
+  /** 
+   * 用户中心。
+   * */
+  Account,
+  /** 
+   * 后台管理。 
+   * */
+  Admin,
+}
+
 export interface SiteSettings {
   /**
    * theme for nav menu
@@ -40,6 +58,23 @@ export interface SiteSettings {
   // Usage: https://github.com/ant-design/ant-design-pro/pull/3517
   iconfontUrl: string;
   colorWeak: boolean;
+
+  //其他配置属性
+  description: string;
+  shortName: string;
+  [name: string]: any;
+  /**
+   * 是否需要电子邮件确认。
+   */
+  requiredEmailConfirmed: boolean;
+  /**
+   * 开启注册。
+   */
+  registrable: boolean;
+  /**
+   * 登录成功后的转向。
+   */
+  loginDirection: LoginDirection;
 }
 
 export default {
