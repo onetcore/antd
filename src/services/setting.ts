@@ -13,7 +13,7 @@ export async function getSetting(): Promise<SiteSettings> {
  * @param params {SiteSettings} 网站配置类型。
  */
 export async function saveSetting(params: SiteSettings) {
-    return request('/api/setting', {
+    return request('/api/admin/setting/save', {
       method: 'POST',
       data: params,
     });

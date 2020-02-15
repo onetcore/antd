@@ -8,6 +8,7 @@ import { SiteSettings } from '../../../../../config/siteSettings';
 
 const FormItem = Form.Item;
 const { Option } = Select;
+const {TextArea} = Input;
 
 interface SettingsProps {
   dispatch: Dispatch<AnyAction>;
@@ -79,6 +80,14 @@ const Settings: React.FC<SettingsProps> = props => {
             rules={[{ required: true, message: '请输入网站名称' }]}
           >
             <Input />
+          </FormItem>
+          <FormItem label="网站简称" name="shortName"
+            rules={[{ required: true, message: '请输入网站名称' }]}
+          >
+            <Input />
+          </FormItem>
+          <FormItem label="描述" name="description">
+            <TextArea rows={3}/>
           </FormItem>
           <FormItem valuePropName="checked" label="是否需要电子邮件确认" name="requiredEmailConfirmed">
             <Checkbox />
