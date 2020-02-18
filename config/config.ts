@@ -88,38 +88,33 @@ export default {
       component: '../layouts/SecurityLayout',
       routes: [
         {
-          path: '/',
+          path: '/admin/',
           component: '../layouts/BasicLayout',
-          authority: ['admin', 'user'],
+          authority: ['admin'],
           routes: [
             {
-              path: '/',
-              redirect: '/welcome',
+              path: '/admin/',
+              component: './admin/index',
             },
             {
-              path: '/welcome',
-              name: 'welcome',
-              icon: 'smile',
-              component: './Welcome',
-            },
-            {
-              path: '/admin',
               name: 'admin',
-              icon: 'crown',
-              component: './Admin',
-              authority: ['admin'],
-            },
-            {
-              name: 'list.table-list',
-              icon: 'table',
-              path: '/list',
-              component: './ListTableList',
+              icon: 'dashboard',
+              path: '/admin/common',
+              routes: [
+                {
+                  name: 'settings',
+                  path: '/admin/common/settings',
+                  component: './admin/settings',
+                },
+                {
+                  component: './404',
+                },
+              ],
             },
             {
               name: 'users',
               icon: 'user',
               path: '/admin/users',
-              authority: ['admin'],
               routes: [
                 {
                   path: '/admin/users',
@@ -128,7 +123,7 @@ export default {
                 {
                   name: 'list',
                   path: '/admin/users/list',
-                  component: './admin/users/list',
+                  component: './admin/users/list/index',
                 },
                 {
                   name: 'roles',
@@ -136,9 +131,7 @@ export default {
                   component: './admin/users/roles',
                 },
                 {
-                  name: 'settings',
-                  path: '/admin/users/settings',
-                  component: './admin/users/settings',
+                  component: './404',
                 },
               ],
             },

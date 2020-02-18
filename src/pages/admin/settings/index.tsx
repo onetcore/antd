@@ -4,7 +4,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import { ConnectState } from '@/models/connect';
 import { Dispatch, AnyAction } from 'redux';
-import { SiteSettings } from '../../../../../config/siteSettings';
+import { SiteSettings } from '../../../../config/siteSettings';
 
 const FormItem = Form.Item;
 const { Option } = Select;

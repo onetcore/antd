@@ -108,7 +108,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       logo={logo}
       formatMessage={formatMessage}
       menuHeaderRender={(logoDom, titleDom) => (
-        <Link to="/">
+        <Link to="/admin">
           {logoDom}
           {titleDom}
         </Link>
