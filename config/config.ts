@@ -70,7 +70,7 @@ export default {
           component: './user/login',
         },
         {
-          name: '注册结果页',
+          name: 'register-result',
           icon: 'smile',
           path: '/user/register-result',
           component: './user/register-result',
@@ -88,23 +88,23 @@ export default {
       component: '../layouts/SecurityLayout',
       routes: [
         {
-          path: '/admin/',
+          path: '/',
           component: '../layouts/BasicLayout',
           authority: ['admin'],
           routes: [
             {
-              path: '/admin/',
-              component: './admin/index',
+              path: '/',
+              component: './index',
             },
             {
-              name: 'admin',
+              name: 'sys',
               icon: 'dashboard',
-              path: '/admin/common',
+              path: '/sys/',
               routes: [
                 {
                   name: 'settings',
-                  path: '/admin/common/settings',
-                  component: './admin/settings',
+                  path: '/sys/settings',
+                  component: './sys/settings',
                 },
                 {
                   component: './404',
@@ -114,21 +114,21 @@ export default {
             {
               name: 'users',
               icon: 'user',
-              path: '/admin/users',
+              path: '/users',
               routes: [
                 {
-                  path: '/admin/users',
-                  redirect: '/admin/users/list',
+                  path: '/users',
+                  redirect: '/users/list',
                 },
                 {
                   name: 'list',
-                  path: '/admin/users/list',
-                  component: './admin/users/list/index',
+                  path: '/users/list',
+                  component: './users/list',
                 },
                 {
                   name: 'roles',
-                  path: '/admin/users/roles',
-                  component: './admin/users/roles',
+                  path: '/users/roles',
+                  component: './users/roles',
                 },
                 {
                   component: './404',
